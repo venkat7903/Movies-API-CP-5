@@ -2,11 +2,11 @@ const express = require("express");
 const path = require("path");
 const { open } = require("sqlite");
 const sqlite3 = require("sqlite3");
-// const cors = require("cors");
+const cors = require("cors");
 
 const app = express();
 app.use(express.json());
-// app.use(cors());
+app.use(cors());
 
 const dbPath = path.join(__dirname, "moviesData.db");
 let db = null;
@@ -66,7 +66,11 @@ app.get("/movies/:movieId/", async (request, response) => {
   SELECT * FROM movie WHERE movie_id=${movieId};
   `;
   const movie = await db.get(getMovie);
-  response.send(convertToCamelCase(movie));
+  if (movie === undefined) {
+    response.send({});
+  } else {
+    response.send(convertToCamelCase(movie));
+  }
 });
 
 // Update Book API
